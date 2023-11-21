@@ -3,6 +3,7 @@ package xyz.bank.services.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xyz.bank.dtos.CustomerAddressDto;
 import xyz.bank.dtos.CustomerDto;
@@ -24,9 +25,13 @@ public class CustomerImpl implements CustomerService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public CustomerDto createCustomer(CustomerDto customerDto) {
 
+        customerDto.setCustomerPassword(passwordEncoder.encode(customerDto.getCustomerPassword()));
         Customer customer = mapper.map(customerDto, Customer.class);
         Customer saved = customerRepository.save(customer);
         return mapper.map(saved, CustomerDto.class);
@@ -45,12 +50,14 @@ public class CustomerImpl implements CustomerService {
                 .customerId(customerId)
                 .customerName(customerDto.getCustomerName())
                 .customerEmailId(customerDto.getCustomerEmailId())
-                .customerPassword(customerDto.getCustomerPassword())
                 .customerDOB(customerDto.getCustomerDOB())
                 .customerAddressDto(customerDto.getCustomerAddressDto())
                 .customerPhoneNumber(customerDto.getCustomerPhoneNumber())
                 .accounts(customerDto.getAccounts())
                 .build();
+        if(!customer1.getCustomerPassword().equalsIgnoreCase(customerDto.getCustomerPassword())){
+            customerDto1.setCustomerPassword(passwordEncoder.encode(customerDto.getCustomerPassword()));
+        }
         Customer customer = mapper.map(customerDto1, Customer.class);
         Customer savedCustomer = customerRepository.save(customer);
         return mapper.map(savedCustomer, CustomerDto.class);
