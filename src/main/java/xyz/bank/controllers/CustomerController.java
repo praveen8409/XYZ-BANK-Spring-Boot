@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import xyz.bank.dtos.ApiResponseMessage;
 import xyz.bank.dtos.CustomerDto;
+import xyz.bank.dtos.PageableResponse;
 import xyz.bank.services.CustomerService;
 
 import java.util.List;
@@ -30,8 +31,13 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDto>> getAllCustomer(){
-        return new ResponseEntity<>(customerService.getAllCustomer(), HttpStatus.OK);
+    public ResponseEntity<PageableResponse<CustomerDto>> getAllCustomer(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "customerName", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+    ){
+        return new ResponseEntity<>(customerService.getAllCustomer(pageNumber, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
 
 

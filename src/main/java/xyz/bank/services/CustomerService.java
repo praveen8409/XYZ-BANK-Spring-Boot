@@ -2,6 +2,7 @@ package xyz.bank.services;
 
 import xyz.bank.dtos.CustomerAddressDto;
 import xyz.bank.dtos.CustomerDto;
+import xyz.bank.dtos.PageableResponse;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface CustomerService {
 
     CustomerDto updateCustomer(int customerId ,CustomerDto customerDto);
 
-    List<CustomerDto> getAllCustomer();
+    PageableResponse<CustomerDto> getAllCustomer(int pageNumber, int pageSize, String sortBy, String sortDir);
 
     void deleteCustomer(int customerId);
 }

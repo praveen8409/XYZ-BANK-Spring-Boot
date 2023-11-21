@@ -3,18 +3,20 @@ package xyz.bank.services.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import xyz.bank.dtos.CustomerAddressDto;
 import xyz.bank.dtos.CustomerDto;
+import xyz.bank.dtos.PageableResponse;
 import xyz.bank.entities.Customer;
 import xyz.bank.exceptions.ResourceNotFoundException;
+import xyz.bank.helper.Helper;
 import xyz.bank.repositories.CustomerRepository;
 import xyz.bank.services.CustomerService;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerImpl implements CustomerService {
@@ -64,10 +66,16 @@ public class CustomerImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDto> getAllCustomer() {
-        List<Customer> customerList = customerRepository.findAll();
-        List<CustomerDto> customerDtoList = customerList.stream().map(customer -> mapper.map(customer, CustomerDto.class)).collect(Collectors.toList());
-        return customerDtoList;
+    public PageableResponse<CustomerDto> getAllCustomer(int pageNumber, int pageSize, String sortBy, String sortDir) {
+        // Ensure that sortBy refers to a valid property of the Customer entity
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Customer> page = customerRepository.findAll(pageable);
+
+        PageableResponse<CustomerDto> response = Helper.getPageableResponse(page, CustomerDto.class);
+
+        return response;
     }
 
     @Override
