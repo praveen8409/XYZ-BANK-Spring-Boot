@@ -24,14 +24,14 @@ public class Customer {
     @NonNull
     private String customerName;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email")
     private String customerEmailId;
 
     @Column(name = "DOB")
     private String customerDOB;
 
     @Column(name = "phone_number")
-    private Long customerPhoneNumber;
+    private String customerPhoneNumber;
 
     @Column(name = "password")
     private String customerPassword;
